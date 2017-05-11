@@ -24,7 +24,7 @@ pip3 install fuzzywuzzy networkx python-Levenshtein
 
 ```bash
 # Get the latest snapshot
-git clone --depth=1 https://github.com/sahat/hackathon-starter.git myproject
+git clone --depth=1 https://github.com/maabdelatif/print-lev-groups.git myproject
 
 # Change directory
 cd myproject
