@@ -10,22 +10,8 @@ from collections import namedtuple
 from fuzzywuzzy import fuzz
 from networkx.algorithms.components.connected import connected_components
 
-
-def read_files_into_list(files):
-    fields = []
-    try:
-        fields = [line for line in fileinput.input(files=files if files else ('-',))]
-    except IOError as e:
-        print('Operation failed: %s' % e)
-    return fields
-
-
-def to_graph(l):
-    graph = networkx.Graph()
-    for part in l:
-        graph.add_nodes_from(part)  # each sublist is a bunch of nodes
-        graph.add_edges_from(to_edges(part))  # connect nodes to each other
-    return graph
+field_name_and_ratio = namedtuple('Field', 'name, ratio')
+memoized_fuzz_match = Memoize(fuzz.ratio)
 
 
 def to_edges(l):
@@ -36,33 +22,51 @@ def to_edges(l):
     return list(zip(l[:-1], l[1:]))
 
 
+def to_graph(l):
+    graph = networkx.Graph()
+    for part in l:
+        graph.add_nodes_from(part)  # each sublist is a bunch of nodes
+        graph.add_edges_from(to_edges(part))  # connect nodes to each other
+    return graph
+
+
+
+def find_matches(fields, min_match_ratio):
+    for field in fields:
+        ratios = [field_name_and_ratio(name=other_field, ratio=memoized_fuzz_match(field, other_field)) for other_field in fields]
+        list_of_names_that_match_threshold = [fld.name for fld in ratios if fld.ratio > min_match_ratio]
+        yield list_of_names_that_match_threshold
+
+
+def read_files_into_list(files):
+    """
+            Reads file into list (should be new line delimited text)
+            If no file supplied then reads from stdin
+    """
+    fields = []
+    try:
+        fields = [line for line in fileinput.input(files=files if files else ('-',))]
+    except IOError as e:
+        print('Operation failed: %s' % e)
+    return fields
+
+
 def main():
     parser = argparse.ArgumentParser(description='This program prints out groups of fields that have a certain Levenshtein edit distance')
 
     parser.add_argument('--ratio', dest='min_match_ratio', choices=[str(i) for i in range(0,101)],
-					    help='Number that determines the Levenshtein edit distance, should be between 0 and 100')
+                                            help='Number that determines the Levenshtein edit distance, should be between 0 and 100')
     parser.add_argument('--files', dest='files', default='', nargs='+',
-					    help='The files that contains new line separated fields')
+                                            help='The files that contains new line separated fields')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0alpha')
 
     opts = parser.parse_args()
-    min_match_ratio = int(opts.min_match_ratio or 70)
-        	
-    matches = []
-    field_name_and_ratio = namedtuple('Field', 'name, ratio')
-    memoized_fuzz_match = Memoize(fuzz.ratio)
+    min_match_ratio = int(opts.min_match_ratio or 80)
 
     fields = read_files_into_list(opts.files)
-    
-    for field in fields:
-        ratios = [field_name_and_ratio(name=other_field, ratio=memoized_fuzz_match(field, other_field)) for other_field in fields]
-        list_of_ratios_that_match_threshold = list([fld for fld in ratios if fld.ratio > min_match_ratio])
-        matches.append(list_of_ratios_that_match_threshold)
-
-    sets_of_names_that_match = [[field_in_list.name for field_in_list in list_of_fields] for list_of_fields in matches]
 
     # the following converts the list to a graph that will merge lists if they have shared items
-    graph = to_graph(sets_of_names_that_match)
+    graph = to_graph(find_matches(fields, min_match_ratio))
     for group in list(connected_components(graph)):
         print(group)
 
