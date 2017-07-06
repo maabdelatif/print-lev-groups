@@ -40,24 +40,19 @@ def to_graph(l):
 
 def draw_cluster(graph, partition, pos):
 
+    # Generate labels
     for node in graph.nodes():
         graph.node[node]['label'] = node
 
-
     networkx.draw_networkx_nodes(graph, pos,
                                  nodelist=graph,
-                                 node_color='b',
                                  node_size=1000,
-                                 alpha=0.8)
+                                 alpha=1.0)
 
-    plot.title('')
-    #networkx.draw_networkx_edges(graph, pos, alpha=0.5)
     networkx.draw(graph, pos)
-
-
     node_labels = networkx.get_node_attributes(graph, 'label')
+    networkx.draw_networkx_labels(graph, pos, node_labels, font_size=8)
 
-    networkx.draw_networkx_labels(graph, pos, node_labels, font_size=10)
 
 def find_matches(fields, min_match_ratio):
     for field in fields:
