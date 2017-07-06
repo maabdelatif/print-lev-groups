@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 
 import argparse
-import itertools
 import fileinput
 import networkx
-import sys
+import matplotlib.pyplot as plot
 from Memoize import Memoize
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from fuzzywuzzy import fuzz
 from networkx.algorithms.components.connected import connected_components
 
 field_name_and_ratio = namedtuple('Field', 'name, ratio')
 memoized_fuzz_match = Memoize(fuzz.ratio)
+
+
+def list_to_dict(list):
+    listdict = {}
+
+    for i in range(len(list)):
+        listdict[i] = list[i]
+
+    return listdict
 
 
 def to_edges(l):
@@ -30,11 +38,31 @@ def to_graph(l):
     return graph
 
 
+def draw_cluster(graph, partition, pos):
+
+    for node in graph.nodes():
+        graph.node[node]['label'] = node
+
+
+    networkx.draw_networkx_nodes(graph, pos,
+                                 nodelist=graph,
+                                 node_color='b',
+                                 node_size=1000,
+                                 alpha=0.8)
+
+    plot.title('')
+    #networkx.draw_networkx_edges(graph, pos, alpha=0.5)
+    networkx.draw(graph, pos)
+
+
+    node_labels = networkx.get_node_attributes(graph, 'label')
+
+    networkx.draw_networkx_labels(graph, pos, node_labels, font_size=10)
 
 def find_matches(fields, min_match_ratio):
     for field in fields:
         ratios = [field_name_and_ratio(name=other_field, ratio=memoized_fuzz_match(field, other_field)) for other_field in fields]
-        list_of_names_that_match_threshold = [fld.name for fld in ratios if fld.ratio > min_match_ratio]
+        list_of_names_that_match_threshold = [fld for fld in ratios if fld.ratio > min_match_ratio]
         yield list_of_names_that_match_threshold
 
 
@@ -66,9 +94,13 @@ def main():
     fields = read_files_into_list(opts.files)
 
     # the following converts the list to a graph that will merge lists if they have shared items
-    graph = to_graph(find_matches(fields, min_match_ratio))
+    matches = find_matches(fields, min_match_ratio)
+    graph = to_graph([[field.name for field in fields] for fields in matches])
+    draw_cluster(graph, list_to_dict([[field.ratio for field in fields] for fields in matches]), networkx.spring_layout(graph))
     for group in list(connected_components(graph)):
         print(group)
+
+    plot.show()
 
 if __name__ == '__main__':
     main()
