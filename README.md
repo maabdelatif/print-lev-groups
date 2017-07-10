@@ -30,7 +30,7 @@ git clone --depth=1 https://github.com/maabdelatif/print-lev-groups.git myprojec
 cd myproject
 
 # Run the script against the sample first-names.txt files and 90 as the similarity percentage
-python3 print_lev_groups.py --files first-names.txt --ratio 90
+python3 print_lev_groups.py --files small-file.txt --ratio 90
 ```
 
 ## Disclaimer
