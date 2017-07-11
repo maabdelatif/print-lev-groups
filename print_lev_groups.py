@@ -95,7 +95,7 @@ def main():
     for group in list(connected_components(graph)):
         print(group)
 
-    plot.show()
+    #plot.show()
 
 if __name__ == '__main__':
     main()

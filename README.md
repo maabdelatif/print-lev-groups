@@ -6,15 +6,16 @@ You can put in the similarity factor as a number between 0 and 100, where 0 matc
 
 ## Requirements
 
-This project uses python3, python2.7 may work but not guarenteed.
+This project uses python3.5, python2.7 may work but is not guarenteed.
 
 You require the following python packages to run
 
 - fuzzywuzzy (0.15.0)
 - networkx (1.11)
 - python-Levenshtein (0.12.0)
+- matplotlib (2.0.2)
 
-Which you can install either using pip
+Which you can install using pip
 
 ```bash
 pip3 install fuzzywuzzy networkx python-Levenshtein
