@@ -2,8 +2,8 @@
 
 import argparse
 import fileinput
-import networkx
 import matplotlib.pyplot as plot
+import networkx
 from Memoize import Memoize
 from collections import namedtuple, defaultdict
 from fuzzywuzzy import fuzz
@@ -14,10 +14,13 @@ memoized_fuzz_match = Memoize(fuzz.ratio)
 
 
 def list_to_dict(list):
+    """
+        Converts a list to a dictionary
+    """
     listdict = {}
 
-    for i in range(len(list)):
-        listdict[i] = list[i]
+    for i, item in enumerate(list):
+        listdict[i] = item
 
     return listdict
 
