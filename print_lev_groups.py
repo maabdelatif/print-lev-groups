@@ -34,6 +34,9 @@ def to_edges(l):
 
 
 def to_graph(l):
+    """
+        Converts list to a graph
+    """
     graph = networkx.Graph()
     for part in l:
         graph.add_nodes_from(part)  # each sublist is a bunch of nodes
@@ -42,6 +45,9 @@ def to_graph(l):
 
 
 def draw_cluster(graph, partition, pos):
+    """
+        Draws interconnected clusters from a graph with the node names as labels
+    """
 
     # Generate labels
     for node in graph.nodes():
@@ -58,6 +64,10 @@ def draw_cluster(graph, partition, pos):
 
 
 def find_matches(fields, min_match_ratio):
+    """
+        Find matches given a match ratio
+        This is a horrible O(n^2) that needs to be optimized
+    """
     for field in fields:
         ratios = [field_name_and_ratio(name=other_field, ratio=memoized_fuzz_match(field, other_field)) for other_field in fields]
         list_of_names_that_match_threshold = [fld for fld in ratios if fld.ratio > min_match_ratio]
@@ -78,6 +88,9 @@ def read_files_into_list(files):
 
 
 def main():
+    """
+            Reads arguments, finds matches from the inputs, shows matches as groups and plots a graph
+    """
     parser = argparse.ArgumentParser(description='This program prints out groups of fields that have a certain Levenshtein edit distance')
 
     parser.add_argument('--ratio', dest='min_match_ratio', choices=[str(i) for i in range(0,101)],

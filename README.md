@@ -18,8 +18,9 @@ You require the following python packages to run
 Which you can install using pip
 
 ```bash
-pip3 install fuzzywuzzy networkx python-Levenshtein
+pip3 install fuzzywuzzy networkx python-Levenshtein matplotlib
 ```
+
 
 ## Usage
 
