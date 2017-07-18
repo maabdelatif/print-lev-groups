@@ -4,6 +4,9 @@ import argparse
 import fileinput
 import matplotlib.pyplot as plot
 import networkx
+
+import itertools
+
 from Memoize import Memoize
 from collections import namedtuple, defaultdict
 from fuzzywuzzy import fuzz
@@ -66,11 +69,12 @@ def draw_cluster(graph, partition, pos):
 def find_matches(fields, min_match_ratio):
     """
         Find matches given a match ratio
-        This is a horrible O(n^2) that needs to be optimized
+        This is a horrible O(n^2) algorithm that needs to be optimized
     """
+    fuzz_match = lambda arg1, arg2: field_name_and_ratio(name=arg2, ratio=memoized_fuzz_match(arg1, arg2))
     for field in fields:
-        ratios = [field_name_and_ratio(name=other_field, ratio=memoized_fuzz_match(field, other_field)) for other_field in fields]
-        list_of_names_that_match_threshold = [fld for fld in ratios if fld.ratio > min_match_ratio]
+        ratios = [fuzz_match(field, other_field) for other_field in fields]
+        list_of_names_that_match_threshold = list(filter(lambda fld: fld.ratio >= min_match_ratio, ratios))
         yield list_of_names_that_match_threshold
 
 
