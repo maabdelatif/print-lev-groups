@@ -4,9 +4,6 @@ import argparse
 import fileinput
 import matplotlib.pyplot as plot
 import networkx
-
-import itertools
-
 from Memoize import Memoize
 from collections import namedtuple, defaultdict
 from fuzzywuzzy import fuzz
