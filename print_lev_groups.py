@@ -32,7 +32,7 @@ def to_graph(l):
     return graph
 
 
-def draw_cluster(graph, pos):
+def draw_cluster(graph, layout):
     """
         Draws interconnected clusters from a graph with the node names as labels
     """
@@ -41,14 +41,14 @@ def draw_cluster(graph, pos):
     for node in graph.nodes():
         graph.node[node]['label'] = node
 
-    networkx.draw_networkx_nodes(graph, pos,
+    networkx.draw_networkx_nodes(graph, layout,
                                  nodelist=graph,
                                  node_size=1000,
                                  alpha=1.0)
 
     node_labels = networkx.get_node_attributes(graph, 'label')
-    networkx.draw_networkx_labels(graph, pos, node_labels, font_size=8)
-    networkx.draw_networkx_edges(graph, pos, edge_list=graph.edges, arrows=False)
+    networkx.draw_networkx_labels(graph, layout, node_labels, font_size=8)
+    networkx.draw_networkx_edges(graph, layout, edge_list=graph.edges, arrows=False)
 
 
 def find_matches(words, min_match_ratio):
@@ -57,10 +57,9 @@ def find_matches(words, min_match_ratio):
         This is a horrible O(n^2) algorithm that needs to be optimized
         Returns the list of couples that are match the ratio threshold
     """
-    fuzz_match = lambda arg1, arg2: memoized_fuzz_match(arg1, arg2)
     couples = []
     for word, paired_word in itertools.combinations(words, 2):
-        ratio = fuzz_match(word, paired_word)
+        ratio = memoized_fuzz_match(word, paired_word)
         if ratio >= min_match_ratio:
             couples.append([word, paired_word])
     return couples
