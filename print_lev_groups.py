@@ -40,12 +40,9 @@ def draw_cluster(graph, layout):
     for node in graph.nodes():
         graph.node[node]['label'] = node
 
-    networkx.draw_networkx_nodes(graph, layout,
-                                 nodelist=graph,
-                                 node_size=1000,
-                                 alpha=1.0)
-
     node_labels = networkx.get_node_attributes(graph, 'label')
+
+    networkx.draw_networkx_nodes(graph, layout, nodelist=graph, node_size=1000, alpha=1.0)
     networkx.draw_networkx_labels(graph, layout, node_labels, font_size=8)
     networkx.draw_networkx_edges(graph, layout, edge_list=graph.edges, arrows=False)
 
