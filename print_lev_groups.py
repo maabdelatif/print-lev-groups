@@ -4,25 +4,13 @@ import argparse
 import fileinput
 import matplotlib.pyplot as plot
 import networkx
+import itertools
 from Memoize import Memoize
 from collections import namedtuple, defaultdict
 from fuzzywuzzy import fuzz
 from networkx.algorithms.components.connected import connected_components
 
-field_name_and_ratio = namedtuple('Field', 'name, ratio')
 memoized_fuzz_match = Memoize(fuzz.ratio)
-
-
-def list_to_dict(list):
-    """
-        Converts a list to a dictionary
-    """
-    listdict = {}
-
-    for i, item in enumerate(list):
-        listdict[i] = item
-
-    return listdict
 
 
 def to_edges(l):
@@ -35,7 +23,7 @@ def to_edges(l):
 
 def to_graph(l):
     """
-        Converts list to a graph
+        Converts list to graph
     """
     graph = networkx.Graph()
     for part in l:
@@ -44,7 +32,7 @@ def to_graph(l):
     return graph
 
 
-def draw_cluster(graph, partition, pos):
+def draw_cluster(graph, pos):
     """
         Draws interconnected clusters from a graph with the node names as labels
     """
@@ -58,22 +46,24 @@ def draw_cluster(graph, partition, pos):
                                  node_size=1000,
                                  alpha=1.0)
 
-    networkx.draw(graph, pos)
     node_labels = networkx.get_node_attributes(graph, 'label')
     networkx.draw_networkx_labels(graph, pos, node_labels, font_size=8)
+    networkx.draw_networkx_edges(graph, pos, edge_list=graph.edges, arrows=False)
 
 
-def find_matches(fields, min_match_ratio):
+def find_matches(words, min_match_ratio):
     """
         Find matches given a match ratio
         This is a horrible O(n^2) algorithm that needs to be optimized
+        Returns the list of couples that are match the ratio threshold
     """
-    fuzz_match = lambda arg1, arg2: field_name_and_ratio(name=arg2, ratio=memoized_fuzz_match(arg1, arg2))
-    for field in fields:
-        ratios = [fuzz_match(field, other_field) for other_field in fields]
-        list_of_names_that_match_threshold = list(filter(lambda fld: fld.ratio >= min_match_ratio, ratios))
-        yield list_of_names_that_match_threshold
-
+    fuzz_match = lambda arg1, arg2: memoized_fuzz_match(arg1, arg2)
+    couples = []
+    for word, paired_word in itertools.combinations(words, 2):
+        ratio = fuzz_match(word, paired_word)
+        if ratio >= min_match_ratio:
+            couples.append([word, paired_word])
+    return couples
 
 def read_files_into_list(files):
     """
@@ -82,7 +72,7 @@ def read_files_into_list(files):
     """
     fields = []
     try:
-        fields = [line for line in fileinput.input(files=files if files else ('-',))]
+        fields = [line.strip() for line in fileinput.input(files=files if files else ('-',))]
     except IOError as e:
         print('Operation failed: %s' % e)
     return fields
@@ -103,16 +93,17 @@ def main():
     opts = parser.parse_args()
     min_match_ratio = int(opts.min_match_ratio or 80)
 
-    fields = read_files_into_list(opts.files)
+    words = read_files_into_list(opts.files)
 
     # the following converts the list to a graph that will merge lists if they have shared items
-    matches = find_matches(fields, min_match_ratio)
-    graph = to_graph([[field.name for field in fields] for fields in matches])
-    draw_cluster(graph, list_to_dict([[field.ratio for field in fields] for fields in matches]), networkx.spring_layout(graph))
+    matches = find_matches(words, min_match_ratio)
+    graph = to_graph(matches)
+    draw_cluster(graph, networkx.spring_layout(graph))
     for group in list(connected_components(graph)):
         print(group)
 
     plot.show()
+    input('Press any key to continue...')
 
 if __name__ == '__main__':
     main()

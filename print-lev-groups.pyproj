@@ -5,13 +5,15 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ab5f69ed-e857-4817-a970-11a2a2453eeb}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Memoize.py</StartupFile>
+    <StartupFile>print_lev_groups.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId />
+    <CommandLineArguments>--files small-file.txt --ratio 70</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
@@ -25,7 +27,12 @@
   <ItemGroup>
     <Compile Include="Memoize.py" />
     <Compile Include="print_lev_groups.py" />
+    <Compile Include="tests\TestLevGroups.py" />
+    <Compile Include="tests\__init__.py" />
     <Compile Include="__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
