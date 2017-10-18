@@ -6,7 +6,6 @@ import matplotlib.pyplot as plot
 import networkx
 import itertools
 from Memoize import Memoize
-from collections import namedtuple, defaultdict
 from fuzzywuzzy import fuzz
 from networkx.algorithms.components.connected import connected_components
 
@@ -69,24 +68,24 @@ def read_files_into_list(files):
             Reads file into list (should be new line delimited text)
             If no file supplied then reads from stdin
     """
-    fields = []
+    contents = []
     try:
-        fields = [line.strip() for line in fileinput.input(files=files if files else ('-',))]
+        contents = [line.strip() for line in fileinput.input(files=files if files else ('-',))]
     except IOError as e:
         print('Operation failed: %s' % e)
-    return fields
+    return contents
 
 
 def main():
     """
             Reads arguments, finds matches from the inputs, shows matches as groups and plots a graph
     """
-    parser = argparse.ArgumentParser(description='This program prints out groups of fields that have a certain Levenshtein edit distance')
+    parser = argparse.ArgumentParser(description='This program prints out groups of words that have a certain Levenshtein edit distance')
 
     parser.add_argument('--ratio', dest='min_match_ratio', choices=[str(i) for i in range(0,101)],
                                             help='Number that determines the Levenshtein edit distance, should be between 0 and 100')
     parser.add_argument('--files', dest='files', default='', nargs='+',
-                                            help='The files that contains new line separated fields')
+                                            help='The files that contains new line separated words')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0alpha')
 
     opts = parser.parse_args()
