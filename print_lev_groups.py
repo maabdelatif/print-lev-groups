@@ -60,6 +60,7 @@ def find_matches(words, min_match_ratio):
             couples.append([word, paired_word])
     return couples
 
+
 def read_files_into_list(files):
     """
             Reads file into list (should be new line delimited text)
