@@ -43,7 +43,7 @@ def draw_cluster(graph, layout):
     node_labels = networkx.get_node_attributes(graph, 'label')
 
     networkx.draw_networkx_nodes(graph, layout, nodelist=graph, node_size=1000, alpha=1.0)
-    networkx.draw_networkx_labels(graph, layout, node_labels, font_size=8)
+    networkx.draw_networkx_labels(graph, layout, labels=node_labels, font_size=8)
     networkx.draw_networkx_edges(graph, layout, edge_list=graph.edges, arrows=False)
 
 
@@ -51,7 +51,7 @@ def find_matches(words, min_match_ratio):
     """
         Find matches given a match ratio
         This is a horrible O(n^2) algorithm that needs to be optimized
-        Returns the list of couples that are match the ratio threshold
+        Returns the list of couples that match the ratio threshold
     """
     couples = []
     for word, paired_word in itertools.combinations(words, 2):
