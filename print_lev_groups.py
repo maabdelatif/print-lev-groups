@@ -55,7 +55,7 @@ def find_matches(words, min_match_ratio):
     """
     couples = []
     for word, paired_word in itertools.combinations(words, 2):
-        ratio = memoized_fuzz_match(word, paired_word)
+        ratio = memoized_fuzz_match(word, paired_word) # using the memoized function at this point is redudant as itertool.combinations only produces unique pairs
         if ratio >= min_match_ratio:
             couples.append([word, paired_word])
     return couples
