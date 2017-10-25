@@ -50,7 +50,7 @@ def draw_cluster(graph, layout):
 def find_matches(words, min_match_ratio):
     """
         Find matches given a match ratio
-        This is a horrible O(n^2) algorithm that needs to be optimized
+        This method is very slow for a large number of words
         Returns the list of couples that match the ratio threshold
     """
     couples = []
