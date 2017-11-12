@@ -99,7 +99,7 @@ def main():
         print(group)
 
     plot.show()
-    input('Press any key to continue...')
+    input('Press enter to continue...')
 
 if __name__ == '__main__':
     main()
