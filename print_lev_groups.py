@@ -5,12 +5,16 @@ import fileinput
 import matplotlib.pyplot as plot
 import networkx
 import itertools
+from multiprocessing import Pool
+import multiprocessing as mp
 from Memoize import Memoize
 from fuzzywuzzy import fuzz
 from networkx.algorithms.components.connected import connected_components
 
 memoized_fuzz_match = Memoize(fuzz.ratio)
 
+def get_fuzz_ratio(first_word, second_word):
+    return fuzz.ratio(first_word, second_word), first_word, second_word
 
 def to_edges(l):
     """
@@ -50,13 +54,14 @@ def draw_cluster(graph, layout):
 def find_matches(words, min_match_ratio):
     """
         Find matches given a match ratio
-        This method is very slow for a large number of words
+        This method is very slow for a large number of words - hopefully multiprocessing helps
         Returns the list of couples that match the ratio threshold
     """
     couples = []
-    for word, paired_word in itertools.combinations(words, 2):
-        ratio = memoized_fuzz_match(word, paired_word) # using the memoized function at this point is redudant as itertool.combinations only produces unique pairs
-        if ratio >= min_match_ratio:
+    with Pool(processes=mp.cpu_count()) as pool:
+        results = pool.starmap(get_fuzz_ratio, itertools.combinations(words, 2))
+    for result, word, paired_word in results:
+        if result >= min_match_ratio:
             couples.append([word, paired_word])
     return couples
 
