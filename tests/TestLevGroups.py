@@ -3,8 +3,7 @@ import sys
 import unittest
 from os import path
 
-sys.path.append(path.dirname(path.dirname(path.abspath('print_lev_groups.py'))))
-import print_lev_groups
+from print_lev_groups import print_lev_groups
 
 
 class TestPrintGroups(unittest.TestCase):
