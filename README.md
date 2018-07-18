@@ -21,6 +21,12 @@ Which you can install using pip
 pip3 install fuzzywuzzy networkx python-Levenshtein matplotlib
 ```
 
+In addition you require python-tk which unfortunately cannot be installed by pip, however you can install it on Ubuntu via:
+
+```bash
+sudo apt install python3-tk
+```
+
 
 ## Usage
 
