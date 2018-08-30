@@ -30,6 +30,7 @@ Kira
 Kitana
 Kobra
 Kotal Kahn
+Kung Jin
 Kung Lao
 Li Mei
 Liu Kang
