@@ -2,7 +2,7 @@ venv: requirements.txt
 	python3 -m virtualenv -p python3 venv
 	venv/bin/pip install --upgrade -r requirements.txt
 
-lint:
+lint: venv
 	venv/bin/pylint print_lev_groups/*.py
 
 example: venv
